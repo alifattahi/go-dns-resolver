@@ -12,7 +12,7 @@ import (
 )
 
 func startServer(ctx context.Context) (*exec.Cmd, error) {
-	cmd := exec.CommandContext(ctx, "go", "run", "cmd/main.go")
+	cmd := exec.CommandContext(ctx, "go", "run", "../cmd/main.go")
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	if err := cmd.Start(); err != nil {
