@@ -134,7 +134,7 @@ jobs:
           git config user.email "github-actions@github.com"
           git fetch origin release-production
           git checkout release-production
-          IMAGE_TAG="ghcr.io/${{ github.repository_owner }}/go-dns-resolver:${{ github.sha }}"
+          IMAGE_TAG="${BRANCH_NAME}-${COMMIT_HASH}"
 
           # Update only the tag field in values.yaml
           sed -i "s|tag: .*|tag: ${IMAGE_TAG##*:}|" helm-chart/values.yaml
@@ -142,7 +142,7 @@ jobs:
           if [[ -n "$(git status --porcelain)" ]]; then
             git add helm-chart/values.yaml
             git commit -m "Update image to $IMAGE_TAG"
-            git push https://x-access-token:${{ secrets.PAT_TOKEN }}@github.com/${{ github.repository_owner }}/${{ github.event.repository.name }}.git release-production
+            git push https://${{ secrets.PAT_TOKEN }}@github.com/${{ github.repository_owner }}/${{ github.event.repository.name }}.git release-production
           else
             echo "No changes to commit."
           fi
