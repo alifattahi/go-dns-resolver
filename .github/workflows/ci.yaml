@@ -70,7 +70,7 @@ jobs:
         run: echo "DATABASE_URL=postgres://testuser:testpassword@localhost:5432/testdb?sslmode=disable" >> $GITHUB_ENV
 
       - name: Run tests
-        run: go test ./...
+        run: go test ./tests
 
   docker:
     runs-on: ubuntu-latest

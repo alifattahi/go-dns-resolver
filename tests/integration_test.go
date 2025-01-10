@@ -13,7 +13,7 @@ import (
 
 func startServer() (*exec.Cmd, error) {
 	// Start the server in the background
-	cmd := exec.Command("go", "run", "cmd/main.go")
+	cmd := exec.Command("go", "run", "../cmd/main.go")
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	err := cmd.Start()
