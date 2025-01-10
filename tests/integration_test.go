@@ -49,9 +49,8 @@ func TestIntegration(t *testing.T) {
 	// Ensure the server process is cleaned up
 	defer func() {
 		if server.Process != nil {
-			if err := server.Process.Kill(); err != nil {
-				t.Errorf("Failed to stop server: %v", err)
-			}
+			server.Process.Kill()
+			server.Wait()
 		}
 	}()
 
