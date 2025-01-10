@@ -1,6 +1,16 @@
 # GO DNS RESOLVER
 
 ### build instruction
+first create a .env file with :
+```env
+SERVER_PORT=3000
+DATABASE_URL=postgres://go_dns_user:go_dns_password@postgres:5432/go_dns_db?sslmode=disable
+
+POSTGRES_USER=go_dns_user
+POSTGRES_PASSWORD=go_dns_password
+POSTGRES_DB=go_dns_db
+```
+then
 ```bash
 docker compose build
 ```
