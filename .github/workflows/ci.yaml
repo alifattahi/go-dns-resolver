@@ -69,9 +69,9 @@ jobs:
       - name: Set DATABASE_URL environment variable
         run: echo "DATABASE_URL=postgres://testuser:testpassword@localhost:5432/testdb?sslmode=disable" >> $GITHUB_ENV
 
-      - name: Wait for Postgres
+      - name: Wait for Postgres (increased timeout to 30 seconds)
         run: |
-          for i in {1..10}; do
+          for i in {1..30}; do
             if pg_isready -h localhost -p 5432 -U postgres; then
               echo "Postgres is ready"
               break
