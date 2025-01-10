@@ -2,14 +2,9 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ .Release.Name }}-deployment
+  namespace: {{ .Values.namespace | default "default" }}  # Ensure a default namespace
   labels:
     app: {{ .Release.Name }}
-  annotations:
-    {{- if .Values.prometheus.enabled }}
-    prometheus.io/scrape: "true"
-    prometheus.io/path: "{{ .Values.prometheus.path }}"
-    prometheus.io/port: "{{ .Values.prometheus.port }}"
-    {{- end }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
@@ -28,8 +23,11 @@ spec:
             - containerPort: {{ .Values.service.port }}
           env:
             - name: DATABASE_URL
-              value: "{{ .Values.env.DATABASE_URL }}"
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-secret
+                  key: DATABASE_URL
             - name: SERVER_PORT
-              value: "{{ .Values.env.SERVER_PORT }}" 
+              value: "{{ .Values.env.SERVER_PORT }}"
           resources:
             {{- toYaml .Values.resources | nindent 12 }}

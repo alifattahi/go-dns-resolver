@@ -10,11 +10,11 @@ image:
 service:
   type: NodePort
   port: 8585
-  nodePort: 30085 
+  nodePort: 30085  
 
 env:
   SERVER_PORT: 8585
-  DATABASE_URL: "postgresql://username:password@your-database-host/your-database-name"
+  DATABASE_URL: "postgresql://web-app-pg-cluster-rw.web-app-db:5432/app?password=CblVhWcqk0mujecx1F62RaVvHEo9DPoixxcd8vzxGgzjwWNrLMtraW9hphrm1v41&user=app"
 resources:
   requests:
     memory: "128Mi"
@@ -28,7 +28,7 @@ prometheus:
   path: /metrics
   interval: 30s
   scheme: http
-  tlsConfig: null  
+  tlsConfig: null 
   servicemonitor:
     labels: {}
 

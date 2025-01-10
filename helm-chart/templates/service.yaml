@@ -2,12 +2,17 @@ apiVersion: v1
 kind: Service
 metadata:
   name: {{ .Release.Name }}-service
+  namespace: {{ .Values.namespace | default "default" }}  # Ensure a default namespace
   labels:
     app: {{ .Release.Name }}
 spec:
   ports:
-    - port: {{ .Values.service.port }}
-      targetPort: {{ .Values.env.SERVER_PORT }}
+    - name: http
+      port: {{ .Values.service.port | default 80 }}
+      targetPort: {{ .Values.env.SERVER_PORT | default 8585 }}  
+      {{- if eq .Values.service.type "NodePort" }}
+      nodePort: {{ .Values.service.nodePort | default 30000 }}  
+      {{- end }}
   selector:
     app: {{ .Release.Name }}
-  type: {{ .Values.service.type }}
+  type: {{ .Values.service.type | default "ClusterIP" }}  # Default to ClusterIP if type is not specified

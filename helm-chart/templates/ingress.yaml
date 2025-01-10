@@ -1,28 +1,42 @@
+{{- if .Values.ingress.enabled }}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: {{ .Release.Name }}-ingress
+  name: {{ .Values.ingress.name | default (printf "%s-ingress" .Release.Name) }}
   annotations:
     {{- with .Values.ingress.annotations }}
     {{- toYaml . | nindent 4 }}
     {{- end }}
 spec:
   rules:
+    {{- if .Values.ingress.hosts }}
     {{- range .Values.ingress.hosts }}
     - host: {{ .host }}
       http:
         paths:
+          {{- if .paths }}
           {{- range .paths }}
-          - path: {{ . }}
+          - path: {{ .path | default "/" }}
+            pathType: {{ .pathType | default "Prefix" }}
+            backend:
+              service:
+                name: {{ $.Release.Name }}-service
+                port:
+                  number: {{ $.Values.service.port }}
+          {{- end }}
+          {{- else }}
+          - path: /
             pathType: Prefix
             backend:
               service:
-                name: {{ .Release.Name }}-service
+                name: {{ $.Release.Name }}-service
                 port:
-                  number: {{ .Values.service.port }}
+                  number: {{ $.Values.service.port }}
           {{- end }}
+    {{- end }}
     {{- end }}
   {{- if .Values.ingress.tls }}
   tls:
     {{- toYaml .Values.ingress.tls | nindent 4 }}
   {{- end }}
+{{- end }}

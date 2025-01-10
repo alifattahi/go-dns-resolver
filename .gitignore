@@ -1,1 +1,2 @@
 .env
+./helm-chart/values.dev.yaml
