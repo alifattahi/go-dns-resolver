@@ -1,0 +1,5 @@
+apiVersion: v2
+name: dns-resolver
+description: A Helm chart for deploying dns resolver web API
+version: 0.1.0
+appVersion: "1.0.0"

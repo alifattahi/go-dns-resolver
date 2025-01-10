@@ -1,0 +1,27 @@
+replicaCount: 1
+
+image:
+  repository: alifattahi/dns-resolver
+  tag: latest
+  pullPolicy: Always
+
+service:
+  name: dns-resolver-app-service
+  type: ClusterIP
+  port: 80
+
+env:
+  SERVER_PORT: 3000
+  DATABASE_URL: "postgresql://username:password@your-database-host/your-database-name"
+
+resources: {}
+
+ingress:
+  enabled: false
+  name: ""
+  annotations: {}
+  hosts:
+    - host: dns-resolver-app.local
+      paths: []
+  tls: []
+
