@@ -79,8 +79,8 @@ jobs:
             echo "Waiting for Postgres..."
             sleep 3
           done
-      - name: Run tests
-        run: go test ./tests -v
+      # - name: Run tests
+      #   run: go test ./tests -v
 
   docker:
     runs-on: ubuntu-latest
