@@ -1,40 +1,46 @@
 package tests
 
 import (
-	"net/http"
-	"strings"
-	"testing"
-	"log"
 	"io"
+	"net/http"
 	"os"
 	"os/exec"
+	"strings"
+	"testing"
 	"time"
+	"log"
 )
 
-func startServer() *exec.Cmd {
+func startServer() (*exec.Cmd, error) {
 	// Start the server in the background
-	cmd := exec.Command("go", "run", "../cmd/main.go")
+	cmd := exec.Command("go", "run", "cmd/main.go")
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	err := cmd.Start()
 	if err != nil {
-		log.Fatalf("Failed to start the server: %v", err)
+		return nil, err
 	}
-	return cmd
+	return cmd, nil
 }
 
 func TestIntegration(t *testing.T) {
 	// Start the server
-	server := startServer()
+	server, err := startServer()
+	if err != nil {
+		t.Fatalf("Failed to start the server: %v", err)
+	}
+
 	// Make sure to stop the server after the test is done
 	defer func() {
-		if err := server.Process.Kill(); err != nil {
-			log.Fatalf("Failed to stop server: %v", err)
+		if server.Process != nil {
+			if err := server.Process.Kill(); err != nil {
+				log.Fatalf("Failed to stop server: %v", err)
+			}
 		}
 	}()
 
 	// Wait for a while to make sure the server is up and running
-	time.Sleep(2 * time.Second)
+	time.Sleep(5 * time.Second)
 
 	// Send HTTP request
 	resp, err := http.Get("http://localhost:3000/resolve?domain=snapp.ir")
