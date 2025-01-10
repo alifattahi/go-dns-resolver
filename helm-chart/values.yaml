@@ -1,8 +1,8 @@
 replicaCount: 1
 
 image:
-  repository: alifattahi/dns-resolver
-  tag: latest
+  repository: ghcr.io/alifattahi/go-dns-resolver
+  tag: main-latest
   pullPolicy: Always
 
 service:
@@ -11,7 +11,7 @@ service:
   port: 80
 
 env:
-  SERVER_PORT: 3000
+  SERVER_PORT: 8585
   DATABASE_URL: "postgresql://username:password@your-database-host/your-database-name"
 
 resources: {}
@@ -24,4 +24,9 @@ ingress:
     - host: dns-resolver-app.local
       paths: []
   tls: []
+
+prometheus:
+  enabled: true
+  path: "/metrics"
+  port: "8585"
 
