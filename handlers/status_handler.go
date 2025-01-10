@@ -1,4 +1,5 @@
 package handlers
+
 import (
 	"database/sql"
 	"net/http"
@@ -13,12 +14,18 @@ func ReadinessHandler(db *sql.DB) http.HandlerFunc {
 			return
 		}
 
-		w.WriteHeader(http.StatusOK)
-		w.Write([]byte("ready"))
+		// Write response and check for error
+		if _, err := w.Write([]byte("ready")); err != nil {
+			http.Error(w, "Failed to write response", http.StatusInternalServerError)
+			return
+		}
 	}
 }
 
 func LivenessHandler(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusOK)
-	w.Write([]byte("alive"))
+	// Write response and check for error
+	if _, err := w.Write([]byte("alive")); err != nil {
+		http.Error(w, "Failed to write response", http.StatusInternalServerError)
+		return
+	}
 }

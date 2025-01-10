@@ -1,7 +1,7 @@
 package tests
 
 import (
-	"io/ioutil"
+	"io"
 	"net/http"
 	"strings"
 	"testing"
@@ -20,7 +20,7 @@ func TestIntegration(t *testing.T) {
 	}
 
 	// Check response body
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body) // Use io.ReadAll instead of ioutil.ReadAll
 	if err != nil {
 		t.Fatalf("Failed to read response body: %v", err)
 	}

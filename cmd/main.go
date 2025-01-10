@@ -19,7 +19,9 @@ func main() {
 	if err != nil {
 		log.Fatalf("Database initialization failed: %v", err)
 	}
-	migrations.CreateTableIfNotExists(db)
+	if err := migrations.CreateTableIfNotExists(db); err != nil {
+		log.Fatalf("Failed to create table: %v", err) 
+	}
 	defer db.Close()
 
 	// Register metrics
@@ -34,7 +36,7 @@ func main() {
 	// Start the server
 	port := os.Getenv("SERVER_PORT")
 	if port == "" {
-		port = "8080"
+		port = "3000"
 	}
 	log.Printf("Starting server on port %s...", port)
 	log.Fatal(http.ListenAndServe(":"+port, nil))

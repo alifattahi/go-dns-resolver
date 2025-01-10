@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"net"
 	"net/http"
-
+	"log"
 	"alifattahi.ir/go-dns-resolver/metrics"
 	"alifattahi.ir/go-dns-resolver/models"
 )
@@ -35,7 +35,10 @@ func ResolveDomainHandler(db *sql.DB) http.HandlerFunc {
 				DNSProvider: cachedData.DNSProvider,
 				Cached:      true,
 			}
-			json.NewEncoder(w).Encode(response)
+			if err := json.NewEncoder(w).Encode(response); err != nil {
+				http.Error(w, "Failed to encode response", http.StatusInternalServerError)
+				return
+			}
 			return
 		}
 
@@ -73,9 +76,16 @@ func ResolveDomainHandler(db *sql.DB) http.HandlerFunc {
 			IP:          ip,
 			DNSProvider: dnsProvider,
 		}
-		go models.SaveCache(db, cacheData)
+		go func() {
+			if err := models.SaveCache(db, cacheData); err != nil {
+				log.Println("Failed to save cache:", err)
+			}
+		}()
 
 		// Send response
-		json.NewEncoder(w).Encode(response)
+		if err := json.NewEncoder(w).Encode(response); err != nil {
+			http.Error(w, "Failed to encode response", http.StatusInternalServerError)
+			return
+		}
 	}
 }
