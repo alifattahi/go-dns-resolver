@@ -127,6 +127,8 @@ jobs:
           docker push $LATEST_TAG
 
       - name: Update Helm Chart
+        env:
+          PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
         run: |
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
@@ -140,9 +142,10 @@ jobs:
           if [[ -n "$(git status --porcelain)" ]]; then
             git add helm-chart/values.yaml
             git commit -m "Update image to $IMAGE_TAG"
-            git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository_owner }}/${{ github.event.repository.name }}.git release-production
+            git push https://x-access-token:${{ secrets.PAT_TOKEN }}@github.com/${{ github.repository_owner }}/${{ github.event.repository.name }}.git release-production
           else
             echo "No changes to commit."
           fi
+
 
 
