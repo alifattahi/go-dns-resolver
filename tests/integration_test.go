@@ -3,10 +3,13 @@ package tests
 import (
 	"context"
 	"io"
+	"log"
 	"net/http"
 	"os"
 	"os/exec"
+	"os/signal"
 	"strings"
+	"syscall"
 	"testing"
 	"time"
 )
@@ -29,9 +32,27 @@ func startServer(ctx context.Context) (*exec.Cmd, error) {
 	cmd := exec.CommandContext(ctx, "go", "run", "../cmd/main.go")
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
+
+	// Create a channel to signal the server to shut down
+	shutdown := make(chan os.Signal, 1)
+	signal.Notify(shutdown, syscall.SIGINT, syscall.SIGTERM)
+
+	go func() {
+		<-shutdown
+		if err := cmd.Process.Signal(syscall.SIGTERM); err != nil {
+			log.Printf("Failed to send SIGTERM to server: %v", err)
+		}
+		// Optionally wait for a graceful shutdown period
+		time.Sleep(5 * time.Second)
+		if err := cmd.Process.Kill(); err != nil {
+			log.Printf("Failed to kill server process: %v", err)
+		}
+	}()
+
 	if err := cmd.Start(); err != nil {
 		return nil, err
 	}
+
 	return cmd, nil
 }
 
@@ -52,8 +73,9 @@ func TestIntegration(t *testing.T) {
 			if err := server.Process.Kill(); err != nil {
 				t.Logf("Failed to kill the server process: %v", err)
 			}
-			// Avoid checking Wait after a forced Kill to suppress "signal: killed" warning.
-			_ = server.Wait()
+			if err := server.Wait(); err != nil {
+				t.Logf("Failed to wait for the server process: %v", err)
+			}
 		}
 	}()
 
