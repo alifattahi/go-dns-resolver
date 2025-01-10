@@ -80,7 +80,7 @@ jobs:
             sleep 3
           done
       - name: Run tests
-        run: go test ./tests
+        run: go test ./tests -v
 
   docker:
     runs-on: ubuntu-latest
