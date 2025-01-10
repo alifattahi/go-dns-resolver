@@ -22,13 +22,14 @@ jobs:
         with:
           go-version: '1.19'
 
-      - name: Install golangci-lint
+      - name: Install golangci-lint 
         run: |
-          curl -sSfL https://github.com/golangci/golangci-lint/releases/download/v1.63.4/golangci-lint-1.63.4-linux-amd64.tar.gz | tar -xz -C /usr/local/bin
+          curl -sSfL https://github.com/golangci/golangci-lint/releases/download/v1.63.4/golangci-lint-1.63.4-linux-amd64.deb -o golangci-lint.deb
+          sudo dpkg -i golangci-lint.deb
+          sudo apt-get install -f 
 
       - name: Verify golangci-lint installation
         run: |
-          ls -l /usr/local/bin | grep golangci-lint
           golangci-lint --version
 
       - name: Ensure golangci-lint is in PATH
