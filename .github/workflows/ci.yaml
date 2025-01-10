@@ -137,12 +137,12 @@ jobs:
           # Update only the tag field in values.yaml
           sed -i "s|tag: .*|tag: ${IMAGE_TAG##*:}|" helm-chart/values.yaml
 
-          # Check if there are any changes to commit
           if [[ -n "$(git status --porcelain)" ]]; then
             git add helm-chart/values.yaml
             git commit -m "Update image to $IMAGE_TAG"
-            git push origin release-production
+            git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository_owner }}/${{ github.event.repository.name }}.git release-production
           else
             echo "No changes to commit."
           fi
+
 
