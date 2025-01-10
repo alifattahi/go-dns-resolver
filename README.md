@@ -43,3 +43,23 @@ curl http://localhost:3000/ready
 ```bash
 curl http://localhost:3000/metrics
 ```
+# Helm Chart
+
+```bash
+helm install web-app ./helm-chart --namespace web-app --create-namespace
+```
+
+or
+```bash
+./deply.sh
+```
+
+## Run app locally for development
+```bash
+./run.dev.sh
+```
+
+## run tests
+```bash
+./run.test.sh
+```
