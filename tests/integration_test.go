@@ -52,9 +52,8 @@ func TestIntegration(t *testing.T) {
 			if err := server.Process.Kill(); err != nil {
 				t.Logf("Failed to kill the server process: %v", err)
 			}
-			if err := server.Wait(); err != nil {
-				t.Logf("Failed to wait for the server process: %v", err)
-			}
+			// Avoid checking Wait after a forced Kill to suppress "signal: killed" warning.
+			_ = server.Wait()
 		}
 	}()
 
