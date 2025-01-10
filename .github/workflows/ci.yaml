@@ -126,26 +126,18 @@ jobs:
           docker push $IMAGE_TAG
           docker push $LATEST_TAG
 
-      - name: Update Helm Chart
-        env:
-          PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
+      - name: Update Helm Chart values
         run: |
-          git config user.name "github-actions"
-          git config user.email "github-actions@github.com"
-          git fetch origin release-production
-          git checkout release-production
           IMAGE_TAG="${BRANCH_NAME}-${COMMIT_HASH}"
-
-          # Update only the tag field in values.yaml
           sed -i "s|tag: .*|tag: ${IMAGE_TAG##*:}|" helm-chart/values.yaml
 
-          if [[ -n "$(git status --porcelain)" ]]; then
-            git add helm-chart/values.yaml
-            git commit -m "Update image to $IMAGE_TAG"
-            git push https://${{ secrets.PAT_TOKEN }}@github.com/${{ github.repository_owner }}/${{ github.event.repository.name }}.git release-production
-          else
-            echo "No changes to commit."
-          fi
-
+      - name: Commit and push Helm Chart changes
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          ref: refs/heads/release-production
+          persist-credentials: false
+          push-url: https://github.com/alifattahi/go-dns-resolver.git
+          token: ${{ secrets.GITHUB_TOKEN }}
 
 
