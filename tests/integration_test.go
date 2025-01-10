@@ -11,6 +11,20 @@ import (
 	"time"
 )
 
+func waitForServer(url string, timeout time.Duration) error {
+	start := time.Now()
+	for {
+		if time.Since(start) > timeout {
+			return context.DeadlineExceeded
+		}
+		resp, err := http.Get(url)
+		if err == nil && resp.StatusCode == http.StatusOK {
+			return nil
+		}
+		time.Sleep(500 * time.Millisecond)
+	}
+}
+
 func startServer(ctx context.Context) (*exec.Cmd, error) {
 	cmd := exec.CommandContext(ctx, "go", "run", "../cmd/main.go")
 	cmd.Stdout = os.Stdout
@@ -23,7 +37,7 @@ func startServer(ctx context.Context) (*exec.Cmd, error) {
 
 func TestIntegration(t *testing.T) {
 	// Context with timeout for the server process
-	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Minute)
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Minute)
 	defer cancel()
 
 	// Start the server
@@ -34,13 +48,18 @@ func TestIntegration(t *testing.T) {
 
 	// Ensure the server process is cleaned up
 	defer func() {
-		if err := server.Process.Kill(); err != nil {
-			t.Errorf("Failed to stop server: %v", err)
+		if server.Process != nil {
+			if err := server.Process.Kill(); err != nil {
+				t.Errorf("Failed to stop server: %v", err)
+			}
 		}
 	}()
 
-	// Wait for the server to start
-	time.Sleep(5 * time.Second)
+	// Wait for the server to become ready
+	err = waitForServer("http://localhost:3000/ready", 10*time.Second)
+	if err != nil {
+		t.Fatalf("Server did not become ready in time: %v", err)
+	}
 
 	// Send HTTP request
 	resp, err := http.Get("http://localhost:3000/resolve?domain=snapp.ir")
