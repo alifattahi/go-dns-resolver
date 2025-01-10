@@ -1,6 +1,8 @@
 package tests
 
 import (
+	"bytes"
+	"context"
 	"io"
 	"net/http"
 	"os"
@@ -8,38 +10,37 @@ import (
 	"strings"
 	"testing"
 	"time"
-	"log"
 )
 
-func startServer() (*exec.Cmd, error) {
-	// Start the server in the background
-	cmd := exec.Command("go", "run", "../cmd/main.go")
+func startServer(ctx context.Context) (*exec.Cmd, error) {
+	cmd := exec.CommandContext(ctx, "go", "run", "cmd/main.go")
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
-	err := cmd.Start()
-	if err != nil {
+	if err := cmd.Start(); err != nil {
 		return nil, err
 	}
 	return cmd, nil
 }
 
 func TestIntegration(t *testing.T) {
+	// Context with timeout for the server process
+	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Minute)
+	defer cancel()
+
 	// Start the server
-	server, err := startServer()
+	server, err := startServer(ctx)
 	if err != nil {
 		t.Fatalf("Failed to start the server: %v", err)
 	}
 
-	// Make sure to stop the server after the test is done
+	// Ensure the server process is cleaned up
 	defer func() {
-		if server.Process != nil {
-			if err := server.Process.Kill(); err != nil {
-				log.Fatalf("Failed to stop server: %v", err)
-			}
+		if err := server.Process.Kill(); err != nil {
+			t.Errorf("Failed to stop server: %v", err)
 		}
 	}()
 
-	// Wait for a while to make sure the server is up and running
+	// Wait for the server to start
 	time.Sleep(5 * time.Second)
 
 	// Send HTTP request
@@ -49,7 +50,7 @@ func TestIntegration(t *testing.T) {
 	}
 	defer resp.Body.Close()
 
-	// Check status code
+	// Check response status
 	if resp.StatusCode != http.StatusOK {
 		t.Errorf("Expected status 200, got %d", resp.StatusCode)
 	}
@@ -59,8 +60,8 @@ func TestIntegration(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to read response body: %v", err)
 	}
-
 	if !strings.Contains(string(body), "snapp.ir") {
 		t.Errorf("Response body does not contain 'snapp.ir': %s", string(body))
 	}
 }
+
