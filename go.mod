@@ -1,6 +1,6 @@
 module alifattahi.ir/go-dns-resolver
 
-go 1.22.5
+go 1.23
 
 require (
 	github.com/lib/pq v1.10.9
