@@ -1,7 +1,6 @@
 package tests
 
 import (
-	"bytes"
 	"context"
 	"io"
 	"net/http"
@@ -64,4 +63,3 @@ func TestIntegration(t *testing.T) {
 		t.Errorf("Response body does not contain 'snapp.ir': %s", string(body))
 	}
 }
-
