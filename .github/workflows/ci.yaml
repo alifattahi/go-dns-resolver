@@ -125,3 +125,14 @@ jobs:
           LATEST_TAG="ghcr.io/${{ github.repository_owner }}/go-dns-resolver:${BRANCH_NAME}-latest"
           docker push $IMAGE_TAG
           docker push $LATEST_TAG
+
+      - name: Update Helm Chart
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git fetch origin release-production
+          git checkout release-production
+          sed -i "s|image: .*|image: $IMAGE_TAG|" helm-chart/values.yaml
+          git add helm-chart/values.yaml
+          git commit -m "Update image to $IMAGE_TAG"
+          git push origin release-production
