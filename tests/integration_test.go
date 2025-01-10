@@ -8,7 +8,7 @@ import (
 )
 
 func TestIntegration(t *testing.T) {
-	resp, err := http.Get("http://localhost:8080/resolve?domain=snapp.ir")
+	resp, err := http.Get("http://localhost:3000/resolve?domain=snapp.ir")
 	if err != nil {
 		t.Fatalf("Request failed: %v", err)
 	}
