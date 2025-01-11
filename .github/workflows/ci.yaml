@@ -138,12 +138,8 @@ jobs:
           git add helm-chart/values.yaml
           git commit -m "Update image tag in values.yaml"
 
-      - name: Push changes to release branch
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-          ref: refs/heads/release-production  
-          persist-credentials: false
-          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Push changes to main branch
+        run: |
+            git push origin release-production 
 
 
