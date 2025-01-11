@@ -142,5 +142,5 @@ jobs:
 
       - name: Push changes
         run: |
-          git remote set-url origin https://x-access-token:${{ secrets.PAT_TOKEN }}@github.com/alifattahi/go-dns-resolver.git
+          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/alifattahi/go-dns-resolver.git
           git push origin release-production
