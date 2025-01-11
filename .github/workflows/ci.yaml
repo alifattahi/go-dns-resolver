@@ -145,6 +145,6 @@ jobs:
           ref: refs/heads/release-production  
           persist-credentials: false
           push-url: https://github.com/alifattahi/go-dns-resolver.git
-          token: ${{ secrets.GITHUB_TOKEN }
+          token: ${{ secrets.GITHUB_TOKEN }}
 
 
