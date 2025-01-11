@@ -132,6 +132,7 @@ jobs:
           docker push $LATEST_TAG
 
       - name: Update Helm Chart values
+        if: github.ref == 'refs/heads/main'
         run: |
           BRANCH_NAME=$(echo ${GITHUB_REF#refs/heads/} | tr '/' '-')
           COMMIT_HASH=$(git rev-parse --short HEAD)
@@ -144,6 +145,26 @@ jobs:
           git commit -m "Update IMAGE Tag"
 
       - name: Push changes
+        if: github.ref == 'refs/heads/main'
         run: |
           git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/alifattahi/go-dns-resolver.git
           git push origin release-production --force
+
+      - name: Update Helm Chart values
+        if: github.ref == 'refs/heads/develop'
+        run: |
+          BRANCH_NAME=$(echo ${GITHUB_REF#refs/heads/} | tr '/' '-')
+          COMMIT_HASH=$(git rev-parse --short HEAD)
+          git checkout -b release-production
+          IMAGE_TAG="${BRANCH_NAME}-${COMMIT_HASH}"
+          sed -i "s|tag: .*|tag: ${IMAGE_TAG##*:}|" helm-chart/values.yaml
+          git config --global user.email "${{ secrets.GIT_EMAIL }}"
+          git config --global user.name "${{ github.repository_owner  }}"
+          git add helm-chart/values.yaml
+          git commit -m "Update IMAGE Tag"
+
+      - name: Push changes
+        if: github.ref == 'refs/heads/develop'
+        run: |
+          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/alifattahi/go-dns-resolver.git
+          git push origin release-develop --force

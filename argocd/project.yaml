@@ -10,7 +10,7 @@ spec:
   destinations:
     - namespace: web-app 
       server: https://kubernetes.default.svc
-    - namespace: web-app -dev
+    - namespace: web-app-develop
       server: https://kubernetes.default.svc
   clusterResourceWhitelist:
     - group: '*'

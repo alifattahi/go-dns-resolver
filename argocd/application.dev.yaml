@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: go-dns-resolver-develop
+  namespace: argocd
+spec:
+  project: webapp-project
+  source:
+    repoURL: https://github.com/alifattahi/go-dns-resolver.git
+    targetRevision: release-develop
+    path: helm-chart
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: web-app-develop
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=true
