@@ -4,14 +4,17 @@ metadata:
   name: go-dns-resolver
   namespace: argocd
 spec:
+  project: webapp-project
   source:
     repoURL: https://github.com/alifattahi/go-dns-resolver.git
-    targetRevision: main
+    targetRevision: release-production
     path: helm-chart
   destination:
     server: https://kubernetes.default.svc
-    namespace: default
+    namespace: web-app
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
+    syncOptions:
+    - CreateNamespace=true
