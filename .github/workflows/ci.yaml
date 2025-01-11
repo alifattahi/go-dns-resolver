@@ -134,6 +134,7 @@ jobs:
       - name: Update Helm Chart values
         run: |
           git checkout -b release-production
+          git pull
           IMAGE_TAG="${BRANCH_NAME}-${COMMIT_HASH}"
           sed -i "s|tag: .*|tag: ${IMAGE_TAG##*:}|" helm-chart/values.yaml
           git config --global user.email "${{ secrets.GIT_EMAIL }}"
