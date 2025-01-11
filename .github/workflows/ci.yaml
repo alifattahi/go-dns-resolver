@@ -137,6 +137,14 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add helm-chart/values.yaml
           git commit -m "Update image tag in values.yaml"
-          git push origin release-production
+
+      - name: Push changes to main branch
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          ref: refs/heads/release-production  
+          persist-credentials: false
+          push-url: https://github.com/alifattahi/go-dns-resolver.git
+          token: ${{ secrets.GITHUB_TOKEN }
 
 
