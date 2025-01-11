@@ -134,7 +134,6 @@ jobs:
       - name: Update Helm Chart values
         run: |
           git checkout -b release-production
-          git pull
           IMAGE_TAG="${BRANCH_NAME}-${COMMIT_HASH}"
           sed -i "s|tag: .*|tag: ${IMAGE_TAG##*:}|" helm-chart/values.yaml
           git config --global user.email "${{ secrets.GIT_EMAIL }}"
@@ -145,4 +144,4 @@ jobs:
       - name: Push changes
         run: |
           git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/alifattahi/go-dns-resolver.git
-          git push origin release-production
+          git push origin release-production --force
