@@ -1,20 +1,17 @@
 replicaCount: 1
-
-namespace: web-app 
-
+namespace: web-app
 image:
   repository: ghcr.io/alifattahi/go-dns-resolver
   tag: main-latest
   pullPolicy: Always
-
 service:
   type: NodePort
   port: 8585
-  nodePort: 30085 
-
+  nodePort: 30085
 env:
   SERVER_PORT: 8585
-  DATABASE_URL: "postgresql://username:password@your-database-host/your-database-name"
+  secrets:
+    DATABASE_URL: AgAZpks2usTVf2+RqulxnNPAmjO9urWUeWiC+O8YtSVwa5PBstiQfPD8oXztMDOhv5weyNRCaTX0wHIEI0mRt49t4vYFHUA1/hkFCD27l/5AHokSdoyadkyCaN0QIbQCF3WhbEbAZioCfuOg4Q0JiDlOLZbGE5EWjp+eKlGTbUs5yLGa2mDgeR8Qy59nF2O30gzppyBhiol+br7rkTZ2iyrBIvtBiGXge1lu59OqeZP1ZKyM24lkmCAUo+gUo6AlDLruN21ht+GDpiKgYKVV7Osx+vtFHfG/v351UUzYUiqmQvSBry4rb119lO0Dqt0gujL07+xg5L5zy8+bPlg2tF418/qESVOdLLmc+hv2WfgPmKgMIbY0bBFl0XJ98Q48j7zRPLEpsPzL6ibq9vx1eWTYNhJODbbLdDZXEKtq3c474YNqGFQ9WllS2T2s2+Hq2R5o+bg8TNXYTqtqC1W9NxviX/KNxjKgrki1SwgtYryOW0NISJuV55o13Tq9q0SGU8pr7uszMIAAfE1uCovaD4FUQj0O11WREa3DyS43BsoqbRnmBq9aj/2TVKslCRywKpwSyuTJUqld2lK6LNRi8AiVZoLAxqio8xeWMz4zNYckRQN69SRjs/c2hTvLKs+N0C4rFeoz9zazU8N5sha8P6hD3QAOQQQhDzAu8XR4YQmRcCsZzuYNYtNzZaYwdlDntNJNFtAjSKk56t7Yva2fPMC3zERui4pC7INNgdZv6DYevc6h+WW4/Afhne2TwFPU1SK6gFhn6AiJ8J5a3fgDkx4R0TISD7zwz+yb6fhC4sUesWCW5h1fW08qjyjE0druTPYhi4eP6VRS6QqTDJmk1AicOEwgHT03PWOdAHk=
 resources:
   requests:
     memory: "128Mi"
@@ -22,17 +19,14 @@ resources:
   limits:
     memory: "256Mi"
     cpu: "500m"
-
 prometheus:
   enabled: true
   path: /metrics
   interval: 30s
   scheme: http
-  tlsConfig: null  
+  tlsConfig: null
   servicemonitor:
     labels: {}
-
-
 ingress:
   enabled: true
   name: "dns-resolver-ingress"
@@ -43,9 +37,7 @@ ingress:
       paths:
         - path: /
           pathType: Prefix
-  tls: 
+  tls:
     - secretName: dns-resolver-tls
       hosts:
         - dns-resolver-app.local
-
-
