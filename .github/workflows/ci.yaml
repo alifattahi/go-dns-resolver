@@ -141,6 +141,5 @@ jobs:
 
       - name: Push changes
         run: |
-          cd b
           git remote set-url origin https://x-access-token:${{ secrets.PAT_TOKEN }}@github.com/${{ github.repository_owner }}/go-dns-resolver.git
           git push origin go-dns-resolver
