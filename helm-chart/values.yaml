@@ -2,7 +2,7 @@ replicaCount: 1
 namespace: web-app
 image:
   repository: ghcr.io/alifattahi/go-dns-resolver
-  tag: main-latest
+  tag: main-20e979f
   pullPolicy: Always
 service:
   type: NodePort
