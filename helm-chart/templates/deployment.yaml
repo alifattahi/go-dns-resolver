@@ -29,5 +29,22 @@ spec:
                   key: DATABASE_URL
             - name: SERVER_PORT
               value: "{{ .Values.env.SERVER_PORT }}"
+          livenessProbe:
+            httpGet:
+              path: /healthy
+              port: {{ .Values.service.port }}
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 1
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: {{ .Values.service.port }}
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 1
+            failureThreshold: 3
+            
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
